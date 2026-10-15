@@ -11,6 +11,10 @@ if ! conda env list | grep -qE '^fraud\s'; then
   conda create -n fraud -c conda-forge --override-channels python=3.12 pip -y -q
 fi
 conda activate fraud
+# PyPI can be slow from some Azure networks: long timeout + retries; re-running the script resumes
+export PIP_DEFAULT_TIMEOUT=180 PIP_RETRIES=10
+echo "== PyPI reachability =="
+curl -s -o /dev/null -w "pypi.org responded in %{time_total}s (HTTP %{http_code})\n" --max-time 60 https://pypi.org/simple/pip/ || echo "pypi.org not reachable"
 pip install -q --upgrade pip
 pip install -q -r requirements.txt ipykernel
 python -m ipykernel install --user --name fraud --display-name "Python 3.12 (fraud)" >/dev/null
