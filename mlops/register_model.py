@@ -28,11 +28,23 @@ def _set_stage(client: MlflowClient, version: str, stage: str) -> None:
 
 
 def compare_runs(top: int = 10):
-    runs = mlflow.search_runs(experiment_names=[EXPERIMENT_NAME], order_by=["metrics.test_f1 DESC"])
-    cols = [c for c in ["run_id", "tags.mlflow.runName", "metrics.test_f1", "metrics.test_precision",
-                        "metrics.test_recall", "metrics.test_pr_auc", "metrics.test_roc_auc",
+    """Rank runs by test F1 (sorted locally: Azure ML's MLflow server is strict about order_by)."""
+    exp = mlflow.get_experiment_by_name(EXPERIMENT_NAME)
+    if exp is None:
+        raise SystemExit(f"Experiment '{EXPERIMENT_NAME}' not found; run mlops.track_experiments first.")
+    runs = mlflow.search_runs(experiment_ids=[exp.experiment_id], max_results=200)
+    if runs.empty:
+        print("No runs found.")
+        return runs
+    if "metrics.test_f1" in runs.columns:
+        runs = runs.sort_values("metrics.test_f1", ascending=False)
+    cols = [c for c in ["tags.mlflow.runName", "metrics.test_f1", "metrics.test_precision", "metrics.test_recall",
+                        "metrics.test_pr_auc", "metrics.test_roc_auc", "metrics.latency_ms_single_row",
                         "tags.is_best"] if c in runs.columns]
-    print(runs[cols].head(top).to_string(index=False))
+    import pandas as pd
+
+    with pd.option_context("display.width", 200, "display.max_columns", 20, "display.precision", 4):
+        print(runs[cols].head(top).rename(columns=lambda c: c.split(".", 1)[-1]).to_string(index=False))
     return runs
 
 
@@ -49,9 +61,8 @@ def tag_latest_version(run_id: str | None = None) -> str:
 
 
 def register_best() -> str:
-    runs = mlflow.search_runs(experiment_names=[EXPERIMENT_NAME],
-                              filter_string="tags.selected_model = 'True'",
-                              order_by=["metrics.test_f1 DESC"], max_results=1)
+    exp = mlflow.get_experiment_by_name(EXPERIMENT_NAME)
+    runs = mlflow.search_runs(experiment_ids=[exp.experiment_id], filter_string="tags.selected_model = 'True'")
     if runs.empty:
         raise SystemExit("No run with a logged model found; run mlops.track_experiments first.")
     run_id = runs.iloc[0]["run_id"]
