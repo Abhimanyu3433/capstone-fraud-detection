@@ -18,6 +18,12 @@ curl -s -o /dev/null -w "pypi.org responded in %{time_total}s (HTTP %{http_code}
 pip install -q --upgrade pip
 pip install -q -r requirements.txt ipykernel
 python -m ipykernel install --user --name fraud --display-name "Python 3.12 (fraud)" >/dev/null
+# Save exported workspace values to config.json once, so later terminals and scripts find them
+if [ ! -f config.json ] && [ -n "${AZURE_SUBSCRIPTION_ID:-}" ] && [ -n "${AZURE_RESOURCE_GROUP:-}" ] && [ -n "${AZURE_ML_WORKSPACE:-}" ]; then
+  printf '{\n  "subscription_id": "%s",\n  "resource_group": "%s",\n  "workspace_name": "%s"\n}\n' \
+    "$AZURE_SUBSCRIPTION_ID" "$AZURE_RESOURCE_GROUP" "$AZURE_ML_WORKSPACE" > config.json
+  echo "Saved workspace settings to config.json (git-ignored)"
+fi
 echo "== Workspace detected =="
 [ -f /mnt/azmnt/.nbvm ] && grep -iE "^(subscription|resourcegroup|workspace)" /mnt/azmnt/.nbvm | sed 's/=.*/=<found>/' || echo "(no /mnt/azmnt/.nbvm)"
 python - <<'PY'
