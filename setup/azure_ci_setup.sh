@@ -19,6 +19,7 @@ pip install -q --upgrade pip
 pip install -q -r requirements.txt ipykernel
 python -m ipykernel install --user --name fraud --display-name "Python 3.12 (fraud)" >/dev/null
 echo "== Workspace detected =="
+[ -f /mnt/azmnt/.nbvm ] && grep -iE "^(subscription|resourcegroup|workspace)" /mnt/azmnt/.nbvm | sed 's/=.*/=<found>/' || echo "(no /mnt/azmnt/.nbvm)"
 python - <<'PY'
 from mlops.azure_config import workspace_settings, endpoint_name
 s = workspace_settings()

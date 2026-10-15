@@ -30,15 +30,37 @@ def workspace_settings() -> dict:
     ci = {k: os.getenv(v) for k, v in [("subscription_id", "AZUREML_ARM_SUBSCRIPTION"),
                                        ("resource_group", "AZUREML_ARM_RESOURCEGROUP"),
                                        ("workspace_name", "AZUREML_ARM_WORKSPACE_NAME")]}
-    if all(ci.values()):  # running on an Azure ML compute instance
+    if all(ci.values()):  # running inside an Azure ML job
         return ci
-    cfg = PROJECT_ROOT / "config.json"
-    if cfg.exists():
-        d = json.loads(cfg.read_text())
-        return {"subscription_id": d["subscription_id"], "resource_group": d["resource_group"],
-                "workspace_name": d["workspace_name"]}
-    raise RuntimeError("Set AZURE_SUBSCRIPTION_ID / AZURE_RESOURCE_GROUP / AZURE_ML_WORKSPACE "
-                       "or put the workspace config.json in the project root.")
+    nbvm = _compute_instance_settings()
+    if nbvm:  # running on an Azure ML compute instance
+        return nbvm
+    for cfg in [PROJECT_ROOT / "config.json", PROJECT_ROOT / ".azureml" / "config.json",
+                Path.home() / ".azureml" / "config.json", Path.home() / "cloudfiles" / "code" / "config.json"]:
+        if cfg.exists():
+            d = json.loads(cfg.read_text())
+            return {"subscription_id": d["subscription_id"], "resource_group": d["resource_group"],
+                    "workspace_name": d["workspace_name"]}
+    raise RuntimeError("Workspace not found. In Azure ML studio click your workspace name (top right) -> "
+                       "'Download config file', and upload config.json into the project folder; or set "
+                       "AZURE_SUBSCRIPTION_ID / AZURE_RESOURCE_GROUP / AZURE_ML_WORKSPACE.")
+
+
+def _compute_instance_settings() -> dict | None:
+    """Compute instances record their workspace in /mnt/azmnt/.nbvm (key=value lines) and CI_* env vars."""
+    vals = {}
+    nbvm = Path("/mnt/azmnt/.nbvm")
+    if nbvm.exists():
+        for line in nbvm.read_text().splitlines():
+            if "=" in line:
+                k, v = line.split("=", 1)
+                vals[k.strip().lower()] = v.strip().strip('"')
+    sub = vals.get("subscription") or vals.get("subscription_id") or os.getenv("CI_SUBSCRIPTION")
+    rg = vals.get("resourcegroup") or vals.get("resource_group") or os.getenv("CI_RESOURCE_GROUP")
+    ws = vals.get("workspace") or vals.get("workspace_name") or os.getenv("CI_WORKSPACE")
+    if sub and rg and ws:
+        return {"subscription_id": sub, "resource_group": rg, "workspace_name": ws}
+    return None
 
 
 def endpoint_name() -> str:
