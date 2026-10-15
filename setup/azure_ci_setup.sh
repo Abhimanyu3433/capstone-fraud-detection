@@ -7,7 +7,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 source /anaconda/etc/profile.d/conda.sh
 if ! conda env list | grep -qE '^fraud\s'; then
-  conda create -n fraud python=3.12 -y -q
+  # conda-forge only: avoids the Anaconda default-channel Terms of Service prompt
+  conda create -n fraud -c conda-forge --override-channels python=3.12 pip -y -q
 fi
 conda activate fraud
 pip install -q --upgrade pip
