@@ -84,7 +84,9 @@ def ml_client():
     from azure.ai.ml import MLClient
     from azure.identity import DefaultAzureCredential
 
-    return MLClient(DefaultAzureCredential(), **workspace_settings())
+    s = workspace_settings()
+    return MLClient(DefaultAzureCredential(), subscription_id=s["subscription_id"],
+                    resource_group_name=s["resource_group"], workspace_name=s["workspace_name"])
 
 
 def set_mlflow_tracking(local: bool = False) -> str:
