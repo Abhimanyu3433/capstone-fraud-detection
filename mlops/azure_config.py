@@ -2,8 +2,8 @@
 
 The workspace is found automatically, in this order:
   1. env vars AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP, AZURE_ML_WORKSPACE
-  2. on an Azure ML compute instance: the AZUREML_ARM_* variables it sets (no login needed)
-  3. the workspace `config.json` (Studio -> workspace -> Download config file) in the project root
+  2. the workspace `config.json` in the project root (setup/azure_ci_setup.sh writes it)
+  3. AZUREML_ARM_* variables (Azure ML jobs) or compute-instance metadata
 Authentication uses DefaultAzureCredential: the compute instance's identity, or `az login` locally.
 """
 from __future__ import annotations
@@ -21,26 +21,35 @@ EXPERIMENT_NAME = os.getenv("MLFLOW_EXPERIMENT", "fraud-detection")
 INSTANCE_TYPE = os.getenv("AZURE_INSTANCE_TYPE", "Standard_DS3_v2")
 
 
+def _clean(d: dict) -> dict | None:
+    """Return d only if every value is a real setting (compute instances may export the text 'None')."""
+    if all(v and str(v).strip().lower() not in ("none", "null", "") for v in d.values()):
+        return {k: str(v).strip() for k, v in d.items()}
+    return None
+
+
 def workspace_settings() -> dict:
-    env = {k: os.getenv(v) for k, v in [("subscription_id", "AZURE_SUBSCRIPTION_ID"),
-                                        ("resource_group", "AZURE_RESOURCE_GROUP"),
-                                        ("workspace_name", "AZURE_ML_WORKSPACE")]}
-    if all(env.values()):
+    env = _clean({k: os.getenv(v) for k, v in [("subscription_id", "AZURE_SUBSCRIPTION_ID"),
+                                               ("resource_group", "AZURE_RESOURCE_GROUP"),
+                                               ("workspace_name", "AZURE_ML_WORKSPACE")]})
+    if env:
         return env
-    ci = {k: os.getenv(v) for k, v in [("subscription_id", "AZUREML_ARM_SUBSCRIPTION"),
-                                       ("resource_group", "AZUREML_ARM_RESOURCEGROUP"),
-                                       ("workspace_name", "AZUREML_ARM_WORKSPACE_NAME")]}
-    if all(ci.values()):  # running inside an Azure ML job
-        return ci
-    nbvm = _compute_instance_settings()
-    if nbvm:  # running on an Azure ML compute instance
-        return nbvm
     for cfg in [PROJECT_ROOT / "config.json", PROJECT_ROOT / ".azureml" / "config.json",
                 Path.home() / ".azureml" / "config.json", Path.home() / "cloudfiles" / "code" / "config.json"]:
         if cfg.exists():
             d = json.loads(cfg.read_text())
-            return {"subscription_id": d["subscription_id"], "resource_group": d["resource_group"],
-                    "workspace_name": d["workspace_name"]}
+            found = _clean({"subscription_id": d.get("subscription_id"), "resource_group": d.get("resource_group"),
+                            "workspace_name": d.get("workspace_name")})
+            if found:
+                return found
+    job = _clean({k: os.getenv(v) for k, v in [("subscription_id", "AZUREML_ARM_SUBSCRIPTION"),
+                                               ("resource_group", "AZUREML_ARM_RESOURCEGROUP"),
+                                               ("workspace_name", "AZUREML_ARM_WORKSPACE_NAME")]})
+    if job:  # running inside an Azure ML job
+        return job
+    nbvm = _compute_instance_settings()
+    if nbvm:  # compute instance metadata
+        return nbvm
     raise RuntimeError("Workspace not found. In Azure ML studio click your workspace name (top right) -> "
                        "'Download config file', and upload config.json into the project folder; or set "
                        "AZURE_SUBSCRIPTION_ID / AZURE_RESOURCE_GROUP / AZURE_ML_WORKSPACE.")
@@ -58,9 +67,7 @@ def _compute_instance_settings() -> dict | None:
     sub = vals.get("subscription") or vals.get("subscription_id") or os.getenv("CI_SUBSCRIPTION")
     rg = vals.get("resourcegroup") or vals.get("resource_group") or os.getenv("CI_RESOURCE_GROUP")
     ws = vals.get("workspace") or vals.get("workspace_name") or os.getenv("CI_WORKSPACE")
-    if sub and rg and ws:
-        return {"subscription_id": sub, "resource_group": rg, "workspace_name": ws}
-    return None
+    return _clean({"subscription_id": sub, "resource_group": rg, "workspace_name": ws})
 
 
 def endpoint_name() -> str:
