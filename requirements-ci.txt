@@ -1,0 +1,17 @@
+# Lightweight set for GitHub Actions and local testing (no Azure / MLflow / SHAP).
+# Keep scikit-learn / imbalanced-learn / xgboost / numpy pinned to artifacts/env_versions.json:
+#   python -m src.config --pin
+pandas==2.3.3
+numpy==2.4.4
+scikit-learn==1.8.0
+imbalanced-learn==0.14.2
+xgboost==3.4.1
+joblib==1.5.3
+scipy==1.17.1
+matplotlib>=3.7
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.5
+httpx>=0.26
+pytest>=8.0
+ruff>=0.4

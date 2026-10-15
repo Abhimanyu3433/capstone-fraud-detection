@@ -1,0 +1,17 @@
+# Full environment (VS Code + Azure ML). CI uses requirements-ci.txt.
+# Pin scikit-learn / imbalanced-learn / xgboost / numpy to artifacts/env_versions.json after the
+# Colab run so the pickled pipeline loads:  python -m src.config --pin
+-r requirements-ci.txt
+
+# EDA / interpretation
+seaborn>=0.12
+shap>=0.44
+
+# MLOps (Section 3)
+mlflow>=2.16,<3.0
+azureml-mlflow>=1.57
+azure-ai-ml>=1.20
+azure-identity>=1.17
+
+# Monitoring
+scipy>=1.10

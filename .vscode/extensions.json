@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.debugpy",
+    "ms-toolsai.jupyter",
+    "charliermarsh.ruff",
+    "ms-toolsai.vscode-ai",
+    "github.vscode-github-actions"
+  ]
+}

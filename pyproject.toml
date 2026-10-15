@@ -1,0 +1,22 @@
+[project]
+name = "capstone-fraud"
+version = "1.0.0"
+description = "Online fraud detection: Scikit-learn + FastAPI + GitHub Actions + Azure ML/MLflow"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["notebooks", "artifacts", "mlruns"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src", "api", "mlops", "monitoring", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]

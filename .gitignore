@@ -1,0 +1,44 @@
+# Data (too large for git): place onlinefraud.csv in data/raw/
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Large models (keep the small CI model only)
+models/*.pkl
+!models/fraud_pipeline_ci.pkl
+artifacts/models/*.pkl
+!artifacts/models/fraud_pipeline_ci.pkl
+artifacts/checkpoints/
+artifacts_bundle.zip
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow / Azure local artifacts
+mlruns/
+mlartifacts/
+config.json
+artifacts/monitoring/
+pytest-report.xml
+
+# OS / IDE
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+
+# Local logs
+logs/
