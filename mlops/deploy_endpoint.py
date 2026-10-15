@@ -97,6 +97,18 @@ def show() -> None:
         print(f"  - {d.name}: {d.instance_count} x {d.instance_type}, model={d.model}")
 
 
+def logs(slot: str, lines: int = 200) -> None:
+    """Container logs of a deployment (also works after a failed deployment)."""
+    for container in ("storage-initializer", "inference-server"):
+        print(f"===== {slot} / {container} (last {lines} lines) =====")
+        try:
+            print(ml_client().online_deployments.get_logs(
+                name=slot, endpoint_name=endpoint_name(), lines=lines,
+                container_type=None if container == "inference-server" else container))
+        except Exception as e:
+            print(f"(no logs: {e})")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--slot", choices=["blue", "green"])
@@ -107,6 +119,7 @@ def main() -> None:
     ap.add_argument("--promote", choices=["blue", "green"], help="send 100% traffic to this slot")
     ap.add_argument("--delete-slot", choices=["blue", "green"])
     ap.add_argument("--show", action="store_true")
+    ap.add_argument("--logs", choices=["blue", "green"], help="print container logs of a deployment")
     ap.add_argument("--delete-endpoint", action="store_true")
     a = ap.parse_args()
     if a.slot:
@@ -117,6 +130,8 @@ def main() -> None:
         delete_slot(a.delete_slot)
     if a.show:
         show()
+    if a.logs:
+        logs(a.logs)
     if a.delete_endpoint:
         ml_client().online_endpoints.begin_delete(name=endpoint_name()).result()
         print(f"Deleted endpoint {endpoint_name()}")
