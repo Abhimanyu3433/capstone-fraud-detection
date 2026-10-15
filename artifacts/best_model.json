@@ -1,0 +1,105 @@
+{
+  "model_key": "rf",
+  "model_name": "Random Forest",
+  "estimator_class": "sklearn.ensemble._forest.RandomForestClassifier",
+  "hyperparameters": {
+    "max_depth": 18,
+    "max_features": 0.5,
+    "max_samples": 0.5,
+    "min_samples_leaf": 15,
+    "n_estimators": 90
+  },
+  "search_best_params_prefixed": {
+    "clf__max_depth": 18,
+    "clf__max_features": 0.5,
+    "clf__max_samples": 0.5,
+    "clf__min_samples_leaf": 15,
+    "clf__n_estimators": 90
+  },
+  "imbalance": {
+    "strategy": "random_over",
+    "sampler": "RandomOverSampler",
+    "sampler_ratio": 0.5
+  },
+  "objective": "f1",
+  "decision_threshold": 0.983894023162341,
+  "threshold_min_cost": 0.983894023162341,
+  "threshold_policy": {
+    "method": "max F1 on validation (true class distribution)",
+    "cost_reference": {
+      "cost_fn": 25,
+      "cost_fp": 1
+    }
+  },
+  "selection_criterion": "final model chosen for deployment; criterion = highest validation F1 at tuned threshold, ties -> higher CV F1",
+  "criterion_pick": "XGBoost",
+  "final_model_override": "rf",
+  "cv": {
+    "folds": 3,
+    "refit_scoring": "f1",
+    "cv_pr_auc_mean": 0.9966132110402306,
+    "cv_roc_auc_mean": 0.9979767548250807,
+    "cv_f1_mean": 0.995312693879558,
+    "cv_recall_mean": 0.9912163307367408,
+    "cv_precision_mean": 0.9994467496542185,
+    "cv_pr_auc_std": 0.00244293939348115,
+    "cv_roc_auc_std": 0.001673116022587123,
+    "cv_f1_std": 0.0015627273537304849,
+    "cv_recall_std": 0.002799059297356027,
+    "cv_precision_std": 0.0007824141423917511
+  },
+  "validation_metrics": {
+    "threshold": 0.983894023162341,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "tn": 979852,
+    "fp": 0,
+    "fn": 0,
+    "tp": 564,
+    "expected_cost": 0
+  },
+  "test_metrics": {
+    "threshold": 0.983894023162341,
+    "accuracy": 0.9999597220604453,
+    "precision": 1.0,
+    "recall": 0.990763854218672,
+    "f1": 0.9953605015673981,
+    "roc_auc": 0.9999998954674829,
+    "pr_auc": 0.9999779977996974,
+    "tn": 914611,
+    "fp": 0,
+    "fn": 37,
+    "tp": 3969,
+    "expected_cost": 925
+  },
+  "test_metrics_at_0_5": {
+    "threshold": 0.5,
+    "accuracy": 0.9999749623618984,
+    "precision": 0.9945368760864167,
+    "recall": 0.9997503744383425,
+    "f1": 0.9971368106560439,
+    "roc_auc": 0.9999998954674829,
+    "pr_auc": 0.9999779977996974,
+    "tn": 914589,
+    "fp": 22,
+    "fn": 1,
+    "tp": 4005,
+    "expected_cost": 47
+  },
+  "latency_ms_single_row": 39.666813500007265,
+  "training_data": {
+    "rows": 40073,
+    "frauds": 3643,
+    "fraud_rate_pct": 9.090909090909092,
+    "neg_pos_ratio": 10,
+    "method": "all train frauds + random legit sample"
+  },
+  "random_state": 42,
+  "pipeline_file": "models/fraud_pipeline.pkl",
+  "ci_pipeline_file": "models/fraud_pipeline_ci.pkl",
+  "probability_note": "Model trained on a negative-downsampled sample, so raw probabilities are inflated relative to the true fraud rate; always apply decision_threshold (tuned on the true-distribution validation set) rather than 0.5."
+}

@@ -1,0 +1,96 @@
+{
+  "class_counts": {
+    "0": 6354407,
+    "1": 8213
+  },
+  "fraud_rate_pct": 0.12908204481801522,
+  "imbalance_ratio_legit_per_fraud": 773.7010836478753,
+  "by_type": {
+    "CASH_IN": {
+      "transactions": 1399284,
+      "frauds": 0,
+      "fraud_rate": 0.0
+    },
+    "CASH_OUT": {
+      "transactions": 2237500,
+      "frauds": 4116,
+      "fraud_rate": 0.0018395530726256983
+    },
+    "DEBIT": {
+      "transactions": 41432,
+      "frauds": 0,
+      "fraud_rate": 0.0
+    },
+    "PAYMENT": {
+      "transactions": 2151495,
+      "frauds": 0,
+      "fraud_rate": 0.0
+    },
+    "TRANSFER": {
+      "transactions": 532909,
+      "frauds": 4097,
+      "fraud_rate": 0.007687991758442811
+    }
+  },
+  "amount_median_by_class": {
+    "0": 74684.72,
+    "1": 441423.44
+  },
+  "amount_mean_by_class": {
+    "0": 178197.04172740743,
+    "1": 1467967.2991403872
+  },
+  "fraud_rate_by_hour_pct": {
+    "0": 0.4191,
+    "1": 1.3205,
+    "2": 4.1251,
+    "3": 16.2431,
+    "4": 22.079,
+    "5": 22.3035,
+    "6": 10.4678,
+    "7": 3.6493,
+    "8": 1.3673,
+    "9": 0.1203,
+    "10": 0.0881,
+    "11": 0.0726,
+    "12": 0.0701,
+    "13": 0.0739,
+    "14": 0.0803,
+    "15": 0.0818,
+    "16": 0.0781,
+    "17": 0.0802,
+    "18": 0.0591,
+    "19": 0.0528,
+    "20": 0.0614,
+    "21": 0.14,
+    "22": 0.1804,
+    "23": 0.2287
+  },
+  "night_fraud_rate_pct": 1.7725678255850097,
+  "day_fraud_rate_pct": 0.09947176126777295,
+  "full_drain_rate_by_class_pct": {
+    "0": 0.00011015976785874748,
+    "1": 97.6257153293559
+  },
+  "orig_zero_after_rate_by_class_pct": {
+    "0": 56.6774051457516,
+    "1": 98.05186898818945
+  },
+  "spearman_with_target": {
+    "is_full_drain": 0.9871,
+    "error_balance_orig": -0.3601,
+    "is_night": 0.3269,
+    "oldbalanceOrg": 0.2909,
+    "amount": 0.2657,
+    "orig_zero_after": 0.2223,
+    "newbalanceOrig": -0.2099,
+    "orig_zero_before": -0.1877,
+    "step": 0.153,
+    "hour": -0.146,
+    "amount_to_orig_balance": -0.1339,
+    "oldbalanceDest": -0.1267,
+    "dest_zero_before": 0.1205,
+    "error_balance_dest": 0.063,
+    "newbalanceDest": -0.0378
+  }
+}

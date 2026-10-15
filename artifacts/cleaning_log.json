@@ -1,0 +1,83 @@
+{
+  "rows_raw": 6362620,
+  "decisions": [
+    "No missing values found; no imputation needed.",
+    "Removed 0 exact duplicate rows.",
+    "Dropped Is_Flagged_Fraud: a rule-based output of the source system (flags only TRANSFERs > 200k), derived from the outcome process; using it would leak and it is not available as an independent input.",
+    "Outliers (IQR rule) kept: fraud rate inside the outlier band is higher than overall, so extreme values carry signal. Heavy tails are handled with a signed log transform inside the pipeline instead.",
+    "Dropped nameOrig / nameDest: identifiers (nameOrig is ~unique per row), so per-account velocity features are not reliable and would not be available to a real-time API without an account history store."
+  ],
+  "missing_per_column": {
+    "step": 0,
+    "type": 0,
+    "amount": 0,
+    "nameOrig": 0,
+    "oldbalanceOrg": 0,
+    "newbalanceOrig": 0,
+    "nameDest": 0,
+    "oldbalanceDest": 0,
+    "newbalanceDest": 0,
+    "isFraud": 0,
+    "isFlaggedFraud": 0
+  },
+  "duplicates_removed": 0,
+  "unknown_type_rows": 0,
+  "negative_money_values": {
+    "amount": 0,
+    "oldbalanceOrg": 0,
+    "newbalanceOrig": 0,
+    "oldbalanceDest": 0,
+    "newbalanceDest": 0
+  },
+  "is_flagged_fraud_crosstab": {
+    "0": {
+      "0": 6354407,
+      "1": 0
+    },
+    "1": {
+      "0": 8197,
+      "1": 16
+    }
+  },
+  "outliers_iqr": {
+    "amount": {
+      "iqr_upper_fence": 501719.33875,
+      "n_outliers": 338078,
+      "pct_outliers": 5.313502928039078,
+      "fraud_rate_in_outliers_pct": 1.1399736155561735,
+      "fraud_rate_overall_pct": 0.12908204481801522
+    },
+    "oldbalanceOrg": {
+      "iqr_upper_fence": 268287.9375,
+      "n_outliers": 1112507,
+      "pct_outliers": 17.485045468690572,
+      "fraud_rate_in_outliers_pct": 0.446379213793711,
+      "fraud_rate_overall_pct": 0.12908204481801522
+    },
+    "newbalanceOrig": {
+      "iqr_upper_fence": 360646.025,
+      "n_outliers": 1053391,
+      "pct_outliers": 16.5559313616089,
+      "fraud_rate_in_outliers_pct": 0.014714384307441396,
+      "fraud_rate_overall_pct": 0.12908204481801522
+    },
+    "oldbalanceDest": {
+      "iqr_upper_fence": 2357591.76875,
+      "n_outliers": 786135,
+      "pct_outliers": 12.355523353587044,
+      "fraud_rate_in_outliers_pct": 0.05927735058227912,
+      "fraud_rate_overall_pct": 0.12908204481801522
+    },
+    "newbalanceDest": {
+      "iqr_upper_fence": 2779773.125,
+      "n_outliers": 738527,
+      "pct_outliers": 11.60727813385052,
+      "fraud_rate_in_outliers_pct": 0.14880972530455894,
+      "fraud_rate_overall_pct": 0.12908204481801522
+    }
+  },
+  "unique_nameOrig_pct": 99.85362947967975,
+  "unique_nameDest_pct": 42.78680795018404,
+  "merchant_dest_pct": 33.81460781879163,
+  "rows_clean": 6362620
+}

@@ -1,0 +1,100 @@
+{
+  "target": "Is_Fraud",
+  "input_features": [
+    "step",
+    "amount",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "type"
+  ],
+  "numeric_inputs": {
+    "step": {
+      "dtype": "int",
+      "min": 1.0,
+      "max": 323.0,
+      "p99_9": 323.0,
+      "max_overall": 743
+    },
+    "amount": {
+      "dtype": "float",
+      "min": 0.0,
+      "max": 92445516.64,
+      "p99_9": 9184625.116960796
+    },
+    "oldbalanceOrg": {
+      "dtype": "float",
+      "min": 0.0,
+      "max": 43818855.3,
+      "p99_9": 26814090.110260084
+    },
+    "newbalanceOrig": {
+      "dtype": "float",
+      "min": 0.0,
+      "max": 43686616.33,
+      "p99_9": 26965473.449240822
+    },
+    "oldbalanceDest": {
+      "dtype": "float",
+      "min": 0.0,
+      "max": 324915061.41,
+      "p99_9": 29226984.50396123
+    },
+    "newbalanceDest": {
+      "dtype": "float",
+      "min": 0.0,
+      "max": 355553416.3,
+      "p99_9": 32188491.26
+    }
+  },
+  "categorical_inputs": {
+    "type": {
+      "allowed": [
+        "CASH_IN",
+        "CASH_OUT",
+        "DEBIT",
+        "PAYMENT",
+        "TRANSFER"
+      ]
+    }
+  },
+  "engineered_features": [
+    "hour",
+    "is_night",
+    "error_balance_orig",
+    "error_balance_dest",
+    "orig_zero_after",
+    "orig_zero_before",
+    "dest_zero_before",
+    "amount_to_orig_balance",
+    "is_full_drain"
+  ],
+  "model_feature_names": [
+    "amount",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "error_balance_orig",
+    "error_balance_dest",
+    "hour",
+    "is_night",
+    "orig_zero_after",
+    "orig_zero_before",
+    "dest_zero_before",
+    "amount_to_orig_balance",
+    "is_full_drain",
+    "type_CASH_IN",
+    "type_CASH_OUT",
+    "type_DEBIT",
+    "type_PAYMENT",
+    "type_TRANSFER"
+  ],
+  "dropped_columns": {
+    "nameOrig": "identifier",
+    "nameDest": "identifier",
+    "isFlaggedFraud": "rule-based flag / leakage"
+  },
+  "notes": "All engineering lives in src/features.py and runs inside the pipeline; the API sends raw inputs only."
+}

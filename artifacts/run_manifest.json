@@ -1,0 +1,108 @@
+{
+  "created_utc": "2026-10-15T03:22:05+00:00",
+  "notebook": "01_model_selection.ipynb",
+  "budget": "laptop",
+  "budget_config": {
+    "neg_pos_ratio": 10,
+    "cv_folds": 3,
+    "imb_sample": 40000,
+    "rf_max_trees": 100,
+    "n_iter": {
+      "logreg": 5,
+      "dtree": 6,
+      "rf": 3,
+      "xgb": 6,
+      "hgb": 4
+    }
+  },
+  "data_file": "onlinefraud.csv",
+  "rows_raw": 6362620,
+  "rows_clean": 6362620,
+  "split": {
+    "train": {
+      "rows": 4463587,
+      "frauds": 3643,
+      "fraud_rate_pct": 0.08161597387930379,
+      "step_min": 1,
+      "step_max": 323
+    },
+    "val": {
+      "rows": 980416,
+      "frauds": 564,
+      "fraud_rate_pct": 0.057526600953064826,
+      "step_min": 324,
+      "step_max": 378
+    },
+    "test": {
+      "rows": 918617,
+      "frauds": 4006,
+      "fraud_rate_pct": 0.43609034015264253,
+      "step_min": 379,
+      "step_max": 743
+    },
+    "dev_sample": {
+      "rows": 40073,
+      "frauds": 3643,
+      "fraud_rate_pct": 9.090909090909092,
+      "neg_pos_ratio": 10,
+      "method": "all train frauds + random legit sample"
+    },
+    "boundaries": {
+      "train_end_step": 323,
+      "val_end_step": 378
+    }
+  },
+  "objective": "f1",
+  "imbalance_strategy": "random_over",
+  "best_model": "rf",
+  "timings_seconds": {
+    "load": 9.3,
+    "clean": 21.1,
+    "eda": 11.9,
+    "split": 1.6,
+    "imbalance": 0.5,
+    "evaluate": 51.4,
+    "interpret": 4.8,
+    "export": 0.8
+  },
+  "files": [
+    ".gitkeep",
+    "all_models_summary.json",
+    "best_model.json",
+    "ci_sample.csv",
+    "cleaning_log.json",
+    "curves.json",
+    "cv_results\\dtree.csv",
+    "cv_results\\hgb.csv",
+    "cv_results\\logreg.csv",
+    "cv_results\\rf.csv",
+    "cv_results\\xgb.csv",
+    "eda_summary.json",
+    "env_versions.json",
+    "feature_importance.csv",
+    "feature_spec.json",
+    "figures\\01_class_balance.png",
+    "figures\\02_type.png",
+    "figures\\03_amount_by_class.png",
+    "figures\\04_hour_of_day.png",
+    "figures\\05_over_time.png",
+    "figures\\06_balance_errors.png",
+    "figures\\07_correlation.png",
+    "figures\\08_imbalance_strategies.png",
+    "figures\\09_roc_pr_curves.png",
+    "figures\\10_confusion_matrices.png",
+    "figures\\11_threshold_tradeoff.png",
+    "figures\\12_feature_importance.png",
+    "figures\\13_shap_summary.png",
+    "imbalance_comparison.csv",
+    "model_comparison.csv",
+    "models\\fraud_pipeline.pkl",
+    "models\\fraud_pipeline_ci.pkl",
+    "permutation_importance.csv",
+    "reference_sample.csv",
+    "reload_check.json",
+    "run_manifest.json",
+    "sample_requests.json",
+    "shap_importance.csv"
+  ]
+}
