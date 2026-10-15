@@ -32,6 +32,8 @@ def pip_requirements() -> list[str]:
             pass
     import mlflow
     reqs.append(f"mlflow=={mlflow.__version__}")
+    # Azure's built-in MLflow scoring script imports azureml.ai.monitoring (data collector)
+    reqs.append("azureml-ai-monitoring")
     return reqs
 
 
