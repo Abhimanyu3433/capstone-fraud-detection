@@ -1,0 +1,359 @@
+{
+  "info": {
+    "name": "Fraud Detection API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Model info",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/model/info",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "model",
+            "info"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Predict - fraud pattern",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"step\": 410,\n  \"type\": \"TRANSFER\",\n  \"amount\": 181000.0,\n  \"oldbalanceOrg\": 181000.0,\n  \"newbalanceOrig\": 0.0,\n  \"oldbalanceDest\": 0.0,\n  \"newbalanceDest\": 0.0\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('has probability', () => pm.expect(pm.response.json()).to.have.property('fraud_probability'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Predict - legitimate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"step\": 12,\n  \"type\": \"PAYMENT\",\n  \"amount\": 9839.64,\n  \"oldbalanceOrg\": 170136.0,\n  \"newbalanceOrig\": 160296.36,\n  \"oldbalanceDest\": 0.0,\n  \"newbalanceDest\": 0.0\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Predict batch",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict/batch",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict",
+            "batch"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"transactions\": [\n    {\n      \"step\": 410,\n      \"type\": \"TRANSFER\",\n      \"amount\": 181000.0,\n      \"oldbalanceOrg\": 181000.0,\n      \"newbalanceOrig\": 0.0,\n      \"oldbalanceDest\": 0.0,\n      \"newbalanceDest\": 0.0\n    },\n    {\n      \"step\": 12,\n      \"type\": \"PAYMENT\",\n      \"amount\": 9839.64,\n      \"oldbalanceOrg\": 170136.0,\n      \"newbalanceOrig\": 160296.36,\n      \"oldbalanceDest\": 0.0,\n      \"newbalanceDest\": 0.0\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid - missing field",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"step\": 410,\n  \"type\": \"TRANSFER\",\n  \"oldbalanceOrg\": 181000.0,\n  \"newbalanceOrig\": 0.0,\n  \"oldbalanceDest\": 0.0,\n  \"newbalanceDest\": 0.0\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid - wrong type",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"step\": 410,\n  \"type\": \"TRANSFER\",\n  \"amount\": \"lots\",\n  \"oldbalanceOrg\": 181000.0,\n  \"newbalanceOrig\": 0.0,\n  \"oldbalanceDest\": 0.0,\n  \"newbalanceDest\": 0.0\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid - negative amount",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"step\": 410,\n  \"type\": \"TRANSFER\",\n  \"amount\": -5,\n  \"oldbalanceOrg\": 181000.0,\n  \"newbalanceOrig\": 0.0,\n  \"oldbalanceDest\": 0.0,\n  \"newbalanceDest\": 0.0\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid - unseen category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"step\": 410,\n  \"type\": \"BITCOIN\",\n  \"amount\": 181000.0,\n  \"oldbalanceOrg\": 181000.0,\n  \"newbalanceOrig\": 0.0,\n  \"oldbalanceDest\": 0.0,\n  \"newbalanceDest\": 0.0\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Predict via Azure endpoint",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/predict/azure",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "predict",
+            "azure"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"step\": 410,\n  \"type\": \"TRANSFER\",\n  \"amount\": 181000.0,\n  \"oldbalanceOrg\": 181000.0,\n  \"newbalanceOrig\": 0.0,\n  \"oldbalanceDest\": 0.0,\n  \"newbalanceDest\": 0.0\n}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    }
+  ]
+}
