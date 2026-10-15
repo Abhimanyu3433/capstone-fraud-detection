@@ -40,10 +40,10 @@ def main() -> None:
     a = ap.parse_args()
 
     if a.from_azure or not azure_client.is_configured():
-        from mlops.azure_config import ENDPOINT_NAME, ml_client
-        ep = ml_client().online_endpoints.get(ENDPOINT_NAME)
+        from mlops.azure_config import endpoint_name, ml_client
+        ep = ml_client().online_endpoints.get(endpoint_name())
         os.environ["AZURE_ENDPOINT_URL"] = ep.scoring_uri
-        os.environ["AZURE_ENDPOINT_KEY"] = ml_client().online_endpoints.get_keys(ENDPOINT_NAME).primary_key
+        os.environ["AZURE_ENDPOINT_KEY"] = ml_client().online_endpoints.get_keys(endpoint_name()).primary_key
     if a.slot:
         os.environ["AZURE_DEPLOYMENT"] = a.slot
 

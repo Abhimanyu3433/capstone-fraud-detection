@@ -9,6 +9,8 @@ models/*.pkl
 !models/fraud_pipeline_ci.pkl
 artifacts/models/*.pkl
 !artifacts/models/fraud_pipeline_ci.pkl
+# final model is small (~0.3 MB) and needed on Azure
+!artifacts/models/fraud_pipeline.pkl
 artifacts/checkpoints/
 artifacts_bundle.zip
 

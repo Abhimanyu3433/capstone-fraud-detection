@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import argparse
 
-from mlops.azure_config import ENDPOINT_NAME, INSTANCE_TYPE, MODEL_NAME, ml_client
+from mlops.azure_config import INSTANCE_TYPE, MODEL_NAME, endpoint_name, ml_client
 
 
 def resolve_model_version(version: str | None) -> str:
@@ -33,12 +33,12 @@ def ensure_endpoint():
     from azure.ai.ml.entities import ManagedOnlineEndpoint
 
     try:
-        return ml_client().online_endpoints.get(ENDPOINT_NAME)
+        return ml_client().online_endpoints.get(endpoint_name())
     except Exception:
-        ep = ManagedOnlineEndpoint(name=ENDPOINT_NAME, auth_mode="key",
+        ep = ManagedOnlineEndpoint(name=endpoint_name(), auth_mode="key",
                                    description="Online fraud detection (Capstone Project 1)",
                                    tags={"project": "fraud-capstone"})
-        print(f"Creating endpoint {ENDPOINT_NAME} ...")
+        print(f"Creating endpoint {endpoint_name()} ...")
         return ml_client().online_endpoints.begin_create_or_update(ep).result()
 
 
@@ -49,18 +49,18 @@ def deploy(slot: str, version: str | None, traffic: int, instance_type: str, ins
     v = resolve_model_version(version)
     model = ml_client().models.get(name=MODEL_NAME, version=v)
     dep = ManagedOnlineDeployment(
-        name=slot, endpoint_name=ENDPOINT_NAME, model=model,
+        name=slot, endpoint_name=endpoint_name(), model=model,
         instance_type=instance_type, instance_count=instance_count,
         app_insights_enabled=True,  # usage, latency and error telemetry
         tags={"model_version": v},
     )
-    print(f"Deploying {MODEL_NAME} v{v} to {ENDPOINT_NAME}/{slot} ({instance_count} x {instance_type}) ...")
+    print(f"Deploying {MODEL_NAME} v{v} to {endpoint_name()}/{slot} ({instance_count} x {instance_type}) ...")
     ml_client().online_deployments.begin_create_or_update(dep).result()
     set_traffic(slot, traffic)
 
 
 def set_traffic(slot: str, pct: int) -> None:
-    ep = ml_client().online_endpoints.get(ENDPOINT_NAME)  # refresh after deployment
+    ep = ml_client().online_endpoints.get(endpoint_name())  # refresh after deployment
     current = dict(ep.traffic or {})
     others = [d for d in current if d != slot]
     if not others or pct >= 100:
@@ -81,19 +81,19 @@ def set_traffic(slot: str, pct: int) -> None:
 
 
 def delete_slot(slot: str) -> None:
-    ep = ml_client().online_endpoints.get(ENDPOINT_NAME)
+    ep = ml_client().online_endpoints.get(endpoint_name())
     if (ep.traffic or {}).get(slot, 0) > 0:
         raise SystemExit(f"{slot} still receives traffic; promote the other slot first.")
-    ml_client().online_deployments.begin_delete(name=slot, endpoint_name=ENDPOINT_NAME).result()
+    ml_client().online_deployments.begin_delete(name=slot, endpoint_name=endpoint_name()).result()
     print(f"Deleted deployment {slot}")
 
 
 def show() -> None:
-    ep = ml_client().online_endpoints.get(ENDPOINT_NAME)
-    keys = ml_client().online_endpoints.get_keys(ENDPOINT_NAME)
+    ep = ml_client().online_endpoints.get(endpoint_name())
+    keys = ml_client().online_endpoints.get_keys(endpoint_name())
     print(f"Endpoint : {ep.name}\nScoring  : {ep.scoring_uri}\nTraffic  : {ep.traffic}")
     print(f"Key      : {keys.primary_key[:6]}... (full key: set AZURE_ENDPOINT_KEY from the studio 'Consume' tab)")
-    for d in ml_client().online_deployments.list(ENDPOINT_NAME):
+    for d in ml_client().online_deployments.list(endpoint_name()):
         print(f"  - {d.name}: {d.instance_count} x {d.instance_type}, model={d.model}")
 
 
@@ -118,8 +118,8 @@ def main() -> None:
     if a.show:
         show()
     if a.delete_endpoint:
-        ml_client().online_endpoints.begin_delete(name=ENDPOINT_NAME).result()
-        print(f"Deleted endpoint {ENDPOINT_NAME}")
+        ml_client().online_endpoints.begin_delete(name=endpoint_name()).result()
+        print(f"Deleted endpoint {endpoint_name()}")
 
 
 if __name__ == "__main__":
